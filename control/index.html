@@ -58,7 +58,8 @@
   <div class="card qrbox" id="qrCard" style="display:none">
     <div class="qrhint">⚠️ QQ 未登录，用手机 QQ 扫这个码登录</div>
     <img id="qrImg" alt="QQ 登录二维码">
-    <div class="note">长按保存二维码 → 手机 QQ「扫一扫」→ 右上角相册选图</div>
+    <button class="btn blue" style="margin-top:12px" onclick="sendCmd('qr')">刷新登录二维码</button>
+    <div class="note">点「刷新」再来扫会更稳妥 · 长按保存 → QQ 扫一扫 → 相册选图</div>
   </div>
 
   <div class="card">
@@ -70,6 +71,7 @@
       <button class="btn" onclick="sendCmd('stop-play')">停止刷手机</button>
       <button class="btn red" onclick="sendCmd('offline')">一键下线</button>
       <button class="btn green full" onclick="sendCmd('online')">重新上线</button>
+      <button class="btn blue full" onclick="sendCmd('qr')">刷新登录二维码</button>
     </div>
     <div id="toast" style="margin-top:10px;font-size:12.5px;color:#22d3ee;min-height:18px;text-align:center"></div>
     <div class="note">
@@ -81,7 +83,7 @@
   const OWNER = '1747958271', REPO = 'isi-website';
   const RAW = './';
 
-  const NTFY = 'https://ntfy.sh/dafeiyu-ctl-8f3a7c';
+  const NTFY = 'https://ntfy.sh/dafeiyu-ctl-71b9d2';
   async function sendCmd(cmd) {
     const t = document.getElementById('toast');
     t.textContent = '发送中…';

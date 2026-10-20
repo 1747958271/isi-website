@@ -43,7 +43,7 @@
 <body>
 <div class="wrap">
   <h1>大肥鱼 · 控制台</h1>
-  <div class="sub">手机每 60 秒上报 · <a class="refresh" href="">刷新</a></div>
+  <div class="sub">按钮点一下即执行 · <a class="refresh" href="">刷新状态</a></div>
 
   <div class="card" id="statusCard">
     <div class="lamp" id="lamp">读取中…</div>
@@ -63,37 +63,39 @@
 
   <div class="card">
     <div class="btns">
-      <a class="btn blue" id="btnStatus" href="#">查状态</a>
-      <a class="btn" id="btnRq" href="#">重启 QQ</a>
-      <a class="btn" id="btnRa" href="#">重启 AstrBot</a>
-      <a class="btn green" id="btnStart" href="#">开始刷手机</a>
-      <a class="btn" id="btnStop" href="#">停止刷手机</a>
-      <a class="btn red" id="btnOff" href="#">一键下线</a>
-      <a class="btn green full" id="btnOn" href="#">重新上线</a>
+      <button class="btn blue" onclick="sendCmd('status')">查状态</button>
+      <button class="btn" onclick="sendCmd('restart-qq')">重启 QQ</button>
+      <button class="btn" onclick="sendCmd('restart-astrbot')">重启 AstrBot</button>
+      <button class="btn green" onclick="sendCmd('start-play')">开始刷手机</button>
+      <button class="btn" onclick="sendCmd('stop-play')">停止刷手机</button>
+      <button class="btn red" onclick="sendCmd('offline')">一键下线</button>
+      <button class="btn green full" onclick="sendCmd('online')">重新上线</button>
     </div>
+    <div id="toast" style="margin-top:10px;font-size:12.5px;color:#22d3ee;min-height:18px;text-align:center"></div>
     <div class="note">
-      按钮会在新页面打开 GitHub 提交指令；点「Submit new issue」即可，手机 15 秒内执行，结果会评论在 issue 里。
+      点按钮后约 15 秒内手机执行，状态每 10 分钟上报一次。
     </div>
   </div>
 </div>
 <script>
   const OWNER = '1747958271', REPO = 'isi-website';
-  const RAW = `./`;
+  const RAW = './';
 
-  function issueUrl(cmd) {
-    return `https://github.com/${OWNER}/${REPO}/issues/new?title=${encodeURIComponent('cmd:' + cmd)}&labels=cmd&body=${encodeURIComponent('点 Submit new issue 提交')}`;
+  const NTFY = 'https://ntfy.sh/dafeiyu-ctl-8f3a7c';
+  async function sendCmd(cmd) {
+    const t = document.getElementById('toast');
+    t.textContent = '发送中…';
+    try {
+      const r = await fetch(NTFY, { method: 'POST', body: cmd, headers: { 'Title': 'ctl' } });
+      t.textContent = r.ok ? ('✅ 已发送：' + cmd + '（15 秒内执行）') : ('❌ 发送失败 HTTP ' + r.status);
+    } catch (e) {
+      t.textContent = '❌ 发送失败（网络）';
+    }
   }
-  document.getElementById('btnStatus').href = issueUrl('status');
-  document.getElementById('btnRq').href = issueUrl('restart-qq');
-  document.getElementById('btnRa').href = issueUrl('restart-astrbot');
-  document.getElementById('btnStart').href = issueUrl('start-play');
-  document.getElementById('btnStop').href = issueUrl('stop-play');
-  document.getElementById('btnOff').href = issueUrl('offline');
-  document.getElementById('btnOn').href = issueUrl('online');
 
   async function load() {
     try {
-      const r = await fetch(RAW + 'status.json?t=' + Date.now(), { cache: 'no-store' });
+      const r = await fetch('./status.json?t=' + Date.now(), { cache: 'no-store' });
       if (!r.ok) throw new Error('http ' + r.status);
       const s = await r.json();
       const lamp = document.getElementById('lamp');
@@ -108,7 +110,7 @@
       const qrCard = document.getElementById('qrCard');
       if (!s.online) {
         qrCard.style.display = 'block';
-        document.getElementById('qrImg').src = RAW + 'qr.png?t=' + Date.now();
+        document.getElementById('qrImg').src = './qr.png?t=' + Date.now();
       } else {
         qrCard.style.display = 'none';
       }

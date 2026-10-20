@@ -78,7 +78,7 @@
 </div>
 <script>
   const OWNER = '1747958271', REPO = 'isi-website';
-  const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/control/`;
+  const RAW = `./`;
 
   function issueUrl(cmd) {
     return `https://github.com/${OWNER}/${REPO}/issues/new?title=${encodeURIComponent('cmd:' + cmd)}&labels=cmd&body=${encodeURIComponent('点 Submit new issue 提交')}`;
